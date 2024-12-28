@@ -2,27 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
-import { Comment } from '../types/Comment';
-import { deleteComment, getComments } from '../api/api';
+import { Comment, CommentData } from '../types/Comment';
+import { addComment, deleteComment, getComments } from '../api/api';
 
 type Props = {
   activePost: Post;
 };
 
 export const PostDetails: React.FC<Props> = ({ activePost }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isError, setIsError] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoadingComments(true);
     setIsCommentFormVisible(false);
 
     getComments(activePost.id)
       .then(setComments)
       .catch(() => setIsError(true))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsLoadingComments(false));
   }, [activePost]);
 
   const handleDeleteComment = (commentId: number) => {
@@ -31,6 +32,15 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
     );
 
     deleteComment(commentId).then(() => {});
+  };
+
+  const onAddComment = ({ name, email, body }: CommentData) => {
+    const postId = activePost?.id;
+
+    setIsLoadingBtn(true);
+    addComment({ postId, name, email, body })
+      .then(newComment => setComments([...comments, newComment]))
+      .finally(() => setIsLoadingBtn(false));
   };
 
   return (
@@ -45,7 +55,7 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
         </div>
 
         <div className="block">
-          <Loader isLoading={isLoading} />
+          <Loader isLoading={isLoadingComments} />
 
           {isError && (
             <div className="notification is-danger" data-cy="CommentsError">
@@ -53,7 +63,7 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
             </div>
           )}
 
-          {!isLoading && comments?.length === 0 && !isError && (
+          {!isLoadingComments && comments?.length === 0 && !isError && (
             <p className="title is-4" data-cy="NoCommentsMessage">
               No comments yet
             </p>
@@ -89,7 +99,7 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
               ))}
             </>
           )}
-          {!isLoading && (
+          {!isLoadingComments && (
             <button
               data-cy="WriteCommentButton"
               type="button"
@@ -101,7 +111,12 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
             </button>
           )}
         </div>
-        {isCommentFormVisible && <NewCommentForm />}
+        {isCommentFormVisible && (
+          <NewCommentForm
+            onAddComment={onAddComment}
+            isLoadingBtn={isLoadingBtn}
+          />
+        )}
       </div>
     </div>
   );

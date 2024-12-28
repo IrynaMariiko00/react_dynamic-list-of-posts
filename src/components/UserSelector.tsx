@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../types/User';
+import classNames from 'classnames';
 
 type Props = {
   users: User[];
@@ -19,7 +20,12 @@ export const UserSelector: React.FC<Props> = ({
   };
 
   return (
-    <div data-cy="UserSelector" className="dropdown is-active">
+    <div
+      data-cy="UserSelector"
+      className={classNames('dropdown', {
+        'is-active': users.length > 0 && isDropDownVisible,
+      })}
+    >
       <div className="dropdown-trigger">
         <button
           onClick={toggleDropDown}
@@ -36,25 +42,30 @@ export const UserSelector: React.FC<Props> = ({
         </button>
       </div>
 
-      {isDropDownVisible && (
-        <div className="dropdown-menu" id="dropdown-menu" role="menu">
-          <div className="dropdown-content">
-            {users.map(user => (
-              <a
-                href={`#user-${user.id}`}
-                className="dropdown-item"
-                key={user.id}
-                onClick={() => {
-                  setActiveUser(user);
-                  setIsDropDownVisible(false);
-                }}
-              >
-                {user.name}
-              </a>
-            ))}
-          </div>
+      <div
+        className="dropdown-menu"
+        id="dropdown-menu"
+        role="menu"
+        style={{ display: isDropDownVisible ? 'block' : 'none' }}
+      >
+        <div className="dropdown-content">
+          {users.map(user => (
+            <a
+              href={`#user-${user.id}`}
+              className={classNames('dropdown-item', {
+                'is-active': user.id === activeUser?.id,
+              })}
+              key={user.id}
+              onClick={() => {
+                setActiveUser(user);
+                setIsDropDownVisible(false);
+              }}
+            >
+              {user.name}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
