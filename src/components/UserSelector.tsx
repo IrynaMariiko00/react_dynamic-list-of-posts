@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { User } from '../types/User';
 
-export const UserSelector: React.FC = () => {
+type Props = {
+  users: User[];
+  activeUser: User | null;
+  setActiveUser: (v: User | null) => void;
+};
+
+export const UserSelector: React.FC<Props> = ({
+  users,
+  activeUser,
+  setActiveUser,
+}) => {
+  const [isDropDownVisible, setIsDropDownVisible] = useState(false);
+
+  const toggleDropDown = () => {
+    setIsDropDownVisible(!isDropDownVisible);
+  };
+
   return (
     <div data-cy="UserSelector" className="dropdown is-active">
       <div className="dropdown-trigger">
         <button
+          onClick={toggleDropDown}
           type="button"
           className="button"
           aria-haspopup="true"
           aria-controls="dropdown-menu"
         >
-          <span>Choose a user</span>
+          <span>{activeUser ? activeUser.name : 'Choose a user'}</span>
 
           <span className="icon is-small">
             <i className="fas fa-angle-down" aria-hidden="true" />
@@ -18,25 +36,25 @@ export const UserSelector: React.FC = () => {
         </button>
       </div>
 
-      <div className="dropdown-menu" id="dropdown-menu" role="menu">
-        <div className="dropdown-content">
-          <a href="#user-1" className="dropdown-item">
-            Leanne Graham
-          </a>
-          <a href="#user-2" className="dropdown-item is-active">
-            Ervin Howell
-          </a>
-          <a href="#user-3" className="dropdown-item">
-            Clementine Bauch
-          </a>
-          <a href="#user-4" className="dropdown-item">
-            Patricia Lebsack
-          </a>
-          <a href="#user-5" className="dropdown-item">
-            Chelsey Dietrich
-          </a>
+      {isDropDownVisible && (
+        <div className="dropdown-menu" id="dropdown-menu" role="menu">
+          <div className="dropdown-content">
+            {users.map(user => (
+              <a
+                href={`#user-${user.id}`}
+                className="dropdown-item"
+                key={user.id}
+                onClick={() => {
+                  setActiveUser(user);
+                  setIsDropDownVisible(false);
+                }}
+              >
+                {user.name}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
