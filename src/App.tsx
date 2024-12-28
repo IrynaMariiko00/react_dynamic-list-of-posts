@@ -95,7 +95,7 @@ export const App = () => {
               )}
             >
               <div className="tile is-child box is-success ">
-                <PostDetails />
+                <PostDetails activePost={activePost} />
               </div>
             </div>
           )}
