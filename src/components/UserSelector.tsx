@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
 
@@ -14,6 +14,24 @@ export const UserSelector: React.FC<Props> = ({
   setActiveUser,
 }) => {
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const onOutsideClick = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !(dropdownRef.current as HTMLElement).contains(event.target as Node)
+    ) {
+      setIsDropDownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', onOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', onOutsideClick);
+    };
+  }, []);
 
   const toggleDropDown = () => {
     setIsDropDownVisible(!isDropDownVisible);
@@ -22,6 +40,7 @@ export const UserSelector: React.FC<Props> = ({
   return (
     <div
       data-cy="UserSelector"
+      ref={dropdownRef}
       className={classNames('dropdown', {
         'is-active': users.length > 0 && isDropDownVisible,
       })}

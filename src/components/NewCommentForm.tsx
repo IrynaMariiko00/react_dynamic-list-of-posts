@@ -56,11 +56,15 @@ export const NewCommentForm: React.FC<Props> = ({
 
     onAddComment(formData);
 
-    setFormData({ name: '', email: '', body: '' });
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      body: '',
+    }));
   };
 
   const handleClearComment = (evnt: React.FormEvent<HTMLFormElement>) => {
     evnt.preventDefault();
+    setIsError({ name: false, email: false, body: false });
 
     setFormData({ name: '', email: '', body: '' });
   };

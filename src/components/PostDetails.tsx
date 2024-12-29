@@ -99,12 +99,11 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
               ))}
             </>
           )}
-          {!isLoadingComments && (
+          {!isLoadingComments && !isCommentFormVisible && !isError && (
             <button
               data-cy="WriteCommentButton"
               type="button"
               className="button is-link"
-              style={{ display: isCommentFormVisible ? 'none' : 'block' }}
               onClick={() => setIsCommentFormVisible(true)}
             >
               Write a comment

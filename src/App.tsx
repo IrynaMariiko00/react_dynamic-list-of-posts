@@ -49,7 +49,10 @@ export const App = () => {
                 <UserSelector
                   users={users}
                   activeUser={activeUser}
-                  setActiveUser={setActiveUser}
+                  setActiveUser={user => {
+                    setActiveUser(user);
+                    setActivePost(null);
+                  }}
                 />
               </div>
 
@@ -73,32 +76,33 @@ export const App = () => {
                     No posts yet
                   </div>
                 )}
-
-                <PostsList
-                  isPostsList={isPostsList}
-                  posts={posts}
-                  setActivePost={setActivePost}
-                  activePost={activePost}
-                />
+                {!isLoading && posts.length > 0 && (
+                  <PostsList
+                    isPostsList={isPostsList}
+                    posts={posts}
+                    setActivePost={setActivePost}
+                    activePost={activePost}
+                  />
+                )}
               </div>
             </div>
           </div>
-          {activePost && (
-            <div
-              data-cy="Sidebar"
-              className={classNames(
-                'tile',
-                'is-parent',
-                'is-8-desktop',
-                'Sidebar',
-                'Sidebar--open',
-              )}
-            >
+          <div
+            data-cy="Sidebar"
+            className={classNames(
+              'tile',
+              'is-parent',
+              'is-8-desktop',
+              'Sidebar',
+              { 'Sidebar--open': activePost !== null },
+            )}
+          >
+            {activePost && (
               <div className="tile is-child box is-success ">
                 <PostDetails activePost={activePost} />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </main>
