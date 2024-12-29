@@ -15,8 +15,8 @@ export const PostsList: React.FC<Props> = ({
   setActivePost,
   activePost,
 }) => {
-  if (!isPostsList || isPostsList.length === 0) {
-    return null;
+  if (!isPostsList || posts.length === 0) {
+    return <div>No posts available.</div>;
   }
 
   const toggleOpenPost = (post: Post) => {

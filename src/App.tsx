@@ -37,7 +37,8 @@ export const App = () => {
     }
   }, [activeUser]);
 
-  const isPostsList = activeUser && !isError && posts;
+  const isPostsList =
+    activeUser && !isError && posts.length > 0 ? posts : false;
 
   return (
     <main className="section">

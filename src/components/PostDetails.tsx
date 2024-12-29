@@ -31,7 +31,15 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
       commentsList.filter(comment => comment.id !== commentId),
     );
 
-    deleteComment(commentId).then(() => {});
+    deleteComment(commentId)
+      .then(() => {})
+      .catch(() => {
+        setComments(commentsList => [
+          ...commentsList,
+          comments.find(comment => comment.id === commentId)!,
+        ]);
+        setIsError(true);
+      });
   };
 
   const onAddComment = ({ name, email, body }: CommentData) => {
@@ -45,7 +53,7 @@ export const PostDetails: React.FC<Props> = ({ activePost }) => {
 
   return (
     <div className="content" data-cy="PostDetails">
-      <div className="content" data-cy="PostDetails">
+      <div className="content">
         <div className="block">
           <h2 data-cy="PostTitle">
             {`#${activePost?.id}: ${activePost?.title}`}
